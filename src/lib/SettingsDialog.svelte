@@ -121,12 +121,7 @@
     </div>
 
     <div class="actions">
-      <button
-        type="button"
-        class="secondary"
-        aria-expanded={sharing}
-        onclick={share}
-      >
+      <button type="button" class="secondary" aria-expanded={sharing} onclick={share}>
         Link teilen
       </button>
       <button class="primary">Fertig</button>
