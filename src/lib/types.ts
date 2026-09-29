@@ -51,6 +51,16 @@ export interface Month {
   hours: number;
   /** Merkmal „V“: Vergütung unterhalb der Bagatellgrenze */
   belowThreshold: boolean;
+  /** Nachweis nach Anlage 1 (BASS 21-22 Nr. 21), Schlüssel = Tag im Monat („1“–„31“) */
+  days?: Record<string, DayHours>;
+}
+
+/** Stunden eines Tages; leere Felder fehlen */
+export interface DayHours {
+  ist?: number;
+  soll?: number;
+  /** In den Iststunden enthaltene anrechenbare Ausfallstunden */
+  ausfall?: number;
 }
 
 export interface Declaration {
@@ -62,8 +72,17 @@ export interface Declaration {
   remarks: string;
 }
 
+/** Wochenplan zum Schnellausfüllen der Sollstunden im Tagesnachweis */
+export interface Schedule {
+  id: string;
+  name: string;
+  /** Sollstunden Mo–Fr */
+  soll: [number, number, number, number, number];
+}
+
 export interface AppData {
   profile: Profile;
   months: Month[];
+  schedules: Schedule[];
   declarations: Declaration[];
 }

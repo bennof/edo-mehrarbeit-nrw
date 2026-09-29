@@ -1,9 +1,9 @@
 <script lang="ts">
   import { data, settings, setPersist } from '$lib/store.svelte';
   import ProfileFields from '$lib/ProfileFields.svelte';
-  import { FORM_URL } from '$lib/form';
   import { template, loadTemplate } from '$lib/template.svelte';
   import { buildShareHash } from '$lib/prefill';
+  import { exportJson, importJson } from '$lib/backup';
   import { base } from '$app/paths';
   import { tick } from 'svelte';
 
@@ -41,6 +41,22 @@
     }
   }
 
+  // Sicherung einlesen: ersetzt alle Daten, daher vorher nachfragen
+  let backupMsg = $state<{ ok: boolean; text: string }>();
+  async function restore(e: Event & { currentTarget: HTMLInputElement }) {
+    const input = e.currentTarget;
+    const file = input.files?.[0];
+    input.value = ''; // dieselbe Datei erneut wählbar
+    if (!file) return;
+    if (!confirm('Alle aktuellen Daten durch die Sicherung ersetzen?')) return;
+    try {
+      await importJson(file);
+      backupMsg = { ok: true, text: `✓ Sicherung „${file.name}“ eingelesen.` };
+    } catch (err) {
+      backupMsg = { ok: false, text: err instanceof Error ? err.message : String(err) };
+    }
+  }
+
   // Beim Schließen des Dialogs wieder einklappen
   $effect(() => {
     if (!open) sharing = false;
@@ -70,6 +86,24 @@
           Beim Abschalten werden die gespeicherten Daten sofort gelöscht. Die aktuelle Sitzung
           bleibt erhalten, bis du das Fenster schließt.
         </p>
+        <p class="hint">
+          Gespeichert wird nur lokal in diesem Browser auf diesem Gerät – es gibt keine Kopie auf
+          einem Server. Die Daten gehen verloren, wenn du Browserdaten löschst, im privaten Modus
+          arbeitest oder der Browser selten genutzte Seiten aufräumt (Safari z. B. nach einigen
+          Wochen ohne Besuch). Lade daher regelmäßig eine Sicherung herunter.
+        </p>
+        <div class="backup">
+          <button type="button" class="secondary" onclick={exportJson}
+            >Sicherung herunterladen</button
+          >
+          <label class="secondary file">
+            Sicherung einlesen
+            <input type="file" accept="application/json,.json" onchange={restore} />
+          </label>
+        </div>
+        {#if backupMsg}
+          <p class={backupMsg.ok ? 'hint ok' : 'error'}>{backupMsg.text}</p>
+        {/if}
       </fieldset>
 
       <fieldset>
@@ -77,7 +111,7 @@
         <label>
           Blanko-Erklärung LBV(A/Bes)23
           <span class="source">
-            <input readonly value={FORM_URL} onfocus={(e) => e.currentTarget.select()} />
+            <input readonly value={template.source} onfocus={(e) => e.currentTarget.select()} />
             <button
               type="button"
               class="secondary"
@@ -95,7 +129,7 @@
         {:else if template.status === 'fail'}
           <p class="error">
             Vorlage nicht verfügbar: {template.error}.
-            <a href={FORM_URL} target="_blank" rel="noopener">Quelle öffnen</a>
+            <a href={template.source} target="_blank" rel="noopener">Quelle öffnen</a>
           </p>
         {/if}
       </fieldset>

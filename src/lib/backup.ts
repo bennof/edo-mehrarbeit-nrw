@@ -1,4 +1,5 @@
-// Datensicherung: gesamten Zustand als JSON herunterladen bzw. wieder einlesen
+// Datensicherung: gesamten Zustand als JSON herunterladen bzw. wieder einlesen.
+// Gesichert wird der aktuelle Stand im Speicher – auch wenn Speichern im Browser aus ist.
 import { data, replaceData } from './store.svelte';
 
 export function exportJson() {
@@ -7,7 +8,7 @@ export function exportJson() {
   a.href = URL.createObjectURL(blob);
   a.download = `mehrarbeit-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
-  URL.revokeObjectURL(a.href);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000); // Safari braucht die Adresse noch kurz
 }
 
 /** Wirft einen Fehler, wenn die Datei kein Export dieser App ist */

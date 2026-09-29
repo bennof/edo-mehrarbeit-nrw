@@ -1,6 +1,6 @@
 // App-Zustand: Stammdaten, Monate, Erklärungen – optional im localStorage
 import { parsePrefill } from './prefill';
-import type { AppData, Declaration, Month } from './types';
+import type { AppData, Declaration, Month, Schedule } from './types';
 
 const DATA_KEY = 'mehrarbeit-data';
 const PERSIST_KEY = 'mehrarbeit-persist'; // "false" = Speichern abgeschaltet
@@ -22,6 +22,7 @@ const empty = (): AppData => ({
     otherSchools: 0 // 0 = nein
   },
   months: [],
+  schedules: [],
   declarations: []
 });
 
@@ -47,6 +48,7 @@ function normalize(d: Partial<AppData>): AppData {
   return {
     profile: { ...e.profile, ...d.profile },
     months: d.months ?? [],
+    schedules: d.schedules ?? [],
     declarations: (d.declarations ?? []).map((x) => ({ ...x, remarks: x.remarks ?? '' }))
   };
 }
@@ -102,6 +104,16 @@ const id = () => crypto.randomUUID().slice(0, 8);
 const today = () => new Date().toISOString().slice(0, 10);
 
 export { byMonth, monthLabel, dateLabel } from './format';
+
+export function newSchedule(): Schedule {
+  const s: Schedule = {
+    id: id(),
+    name: `Stundenplan ${data.schedules.length + 1}`,
+    soll: [0, 0, 0, 0, 0]
+  };
+  data.schedules.push(s);
+  return s;
+}
 
 export function newMonth(): Month {
   // nächster Monat nach dem jüngsten erfassten, sonst der aktuelle

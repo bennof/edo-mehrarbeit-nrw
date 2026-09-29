@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { goto } from '$app/navigation';
-  import { newDeclaration, newMonth } from '$lib/store.svelte';
+  import { newDeclaration, newMonth, newSchedule } from '$lib/store.svelte';
   import { loadInfo } from '$lib/info';
   import InfoCarousel from '$lib/InfoCarousel.svelte';
 
@@ -39,10 +40,19 @@
       </span>
     </li>
     <li>
+      <strong>Stundenplan anlegen <small>(optional)</small></strong>
+      <span>
+        Unter <em>＋ Neuer Stundenplan</em> deine Sollstunden von Montag bis Freitag eintragen. Damit
+        lassen sich die Wochen eines Monats mit einem Klick vorausfüllen.
+      </span>
+    </li>
+    <li>
       <strong>Monate erfassen</strong>
       <span>
-        Für jeden Monat die geleisteten Mehrarbeitsstunden eintragen, bei Bedarf mit Merkmal „V“
-        (unterhalb der Bagatellgrenze).
+        Im Nachweis nach Tagen (wie Anlage 1 zum Mehrarbeitserlass) Ist- und Sollstunden je Tag
+        eintragen oder aus dem Stundenplan übernehmen und nur Abweichungen ändern. Die geleisteten
+        Mehrarbeitsstunden werden laufend berechnet; <em>Übertragen</em> setzt sie oben ein. Bei Bedarf
+        Merkmal „V“ (unterhalb der Bagatellgrenze) setzen.
       </span>
     </li>
     <li>
@@ -62,15 +72,51 @@
   </ol>
 
   <div class="actions left">
-    <button class="secondary" onclick={() => goto(`/month/${newMonth().id}`)}>＋ Neuer Monat</button
+    <button
+      class="secondary"
+      onclick={() => goto(resolve('/schedule/[id]', { id: newSchedule().id }))}
+      >＋ Neuer Stundenplan</button
     >
-    <button class="primary" onclick={() => goto(`/declaration/${newDeclaration().id}`)}>
+    <button class="secondary" onclick={() => goto(resolve('/month/[id]', { id: newMonth().id }))}
+      >＋ Neuer Monat</button
+    >
+    <button
+      class="primary"
+      onclick={() => goto(resolve('/declaration/[id]', { id: newDeclaration().id }))}
+    >
       ＋ Neue Erklärung
     </button>
   </div>
 
+  <details class="install">
+    <summary>Auf dem Handy oder Tablet als App installieren</summary>
+    <p>So liegt die App wie jede andere auf dem Startbildschirm und öffnet ohne Browserleiste.</p>
+    <h3>iPhone und iPad (Safari)</h3>
+    <ol>
+      <li>Diese Seite in <b>Safari</b> öffnen.</li>
+      <li>Unten (iPad: oben) auf <b>Teilen</b> tippen – das Quadrat mit dem Pfeil nach oben.</li>
+      <li><b>Zum Home-Bildschirm</b> wählen, eventuell erst nach unten scrollen.</li>
+      <li>Rechts oben auf <b>Hinzufügen</b> tippen.</li>
+    </ol>
+    <h3>Android (Chrome)</h3>
+    <ol>
+      <li>Diese Seite in <b>Chrome</b> öffnen.</li>
+      <li>Oben rechts auf das Menü <b>⋮</b> tippen.</li>
+      <li>
+        <b>App installieren</b> oder <b>Zum Startbildschirm hinzufügen</b> wählen und bestätigen.
+      </li>
+    </ol>
+    <p class="hint">
+      Die installierte App hat eigene Daten: Was du vorher im Browser eingetragen hast, erscheint
+      dort nicht. Übertrage es mit <em>Sicherung herunterladen</em> und <em>Sicherung einlesen</em>
+      in den Einstellungen. Für das Laden der Formularvorlage ist eine Internetverbindung nötig.
+    </p>
+  </details>
+
   <p class="hint privacy">
-    Alle Angaben bleiben in deinem Browser. Es wird nichts an einen Server übertragen.
+    Alle Angaben bleiben in deinem Browser. Es wird nichts an einen Server übertragen – deshalb gibt
+    es auch keine Kopie: Löschst du die Browserdaten oder räumt der Browser auf, sind die Daten weg.
+    Unter <em>⚙ Einstellungen</em> kannst du jederzeit eine Sicherung herunterladen und wieder einlesen.
   </p>
 
   <footer class="credits">

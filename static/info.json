@@ -1,7 +1,22 @@
 [
   {
-    "title": "Erste Alpha-Version 0.1.0-alpha.1",
+    "title": "Willkommen zur Alpha-Version 0.1.0",
     "date": "2026-09-29",
-    "body": "<p>Willkommen! Diese Version ist ein früher Testlauf: Mehrarbeit erfassen, Erklärung anlegen und die LBV-Änderungsmitteilung ausfüllen funktioniert bereits.</p><p>Bitte prüfe jedes erzeugte PDF sorgfältig, bevor du es einreichst. Rückmeldungen und Fehlerberichte helfen sehr.</p>"
+    "body": "<p>Mehrarbeit Tag für Tag nachweisen wie in Anlage 1 zum Mehrarbeitserlass, Wochen per Stundenplan vorausfüllen, Erklärung zusammenstellen und die LBV-Änderungsmitteilung als PDF erzeugen – das funktioniert bereits. Alle Daten bleiben in deinem Browser.</p><p>Es ist ein früher Testlauf: Bitte prüfe jedes PDF sorgfältig, bevor du es einreichst. <a href='mailto:contact@falkner.xyz?subject=edo-mehrarbeit-nrw%23feedback'>Rückmeldungen und Fehlerberichte</a> helfen sehr.</p>"
+  },
+  {
+    "title": "Ab wann wird Mehrarbeit bezahlt?",
+    "date": "2026-09-29",
+    "body": "<p>Ab <strong>4 Mehrarbeitsstunden im Kalendermonat</strong> wird von der ersten Stunde an vergütet, darunter nicht – es sei denn, die 4 Stunden werden nur wegen der Verrechnung mit Unterrichtsausfall unterschritten. Vergütet werden höchstens <strong>288 Stunden im Kalenderjahr</strong>.</p><p>Quelle: <a href='https://bass.schule.nrw/1056.htm' target='_blank' rel='noopener'>BASS 21-22 Nr. 21</a>, Nr. 5.1 und 5.2</p>"
+  },
+  {
+    "title": "Was zählt als Mehrarbeit?",
+    "date": "2026-09-29",
+    "body": "<p>Nur <strong>Unterricht</strong> über die eigene Pflichtstundenzahl hinaus, schriftlich angeordnet oder genehmigt – an der eigenen Schule oder einer anderen Schule derselben Schulform.</p><p>Konferenzen, Sprechtage, Prüfungen, Fortbildungen, Schulfahrten und Verwaltungsarbeit werden nicht als Mehrarbeit vergütet.</p><p>Quelle: <a href='https://bass.schule.nrw/1056.htm' target='_blank' rel='noopener'>BASS 21-22 Nr. 21</a></p>"
+  },
+  {
+    "title": "Soll und Ist im Monat",
+    "date": "2026-09-29",
+    "body": "<p>Mehrarbeit sind die Iststunden eines Kalendermonats abzüglich der Sollstunden. Ausgefallener Pflichtunterricht zählt trotzdem als Iststunde, wenn ein Rechtsanspruch auf den Ausfall besteht – etwa an Feiertagen, Ferien- oder Krankheitstagen – oder wenn du stattdessen dienstlich tätig warst, zum Beispiel bei Konferenzen, Sprechtagen, Prüfungen oder Schulfahrten. Im Nachweis nach Tagen trägst du solche Stunden zusätzlich als Ausfallstunden ein.</p><p>Quelle: <a href='https://bass.schule.nrw/1056.htm' target='_blank' rel='noopener'>BASS 21-22 Nr. 21</a>, Nr. 4.3 und Anlage 1</p>"
   }
 ]

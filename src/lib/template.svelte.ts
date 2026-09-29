@@ -1,24 +1,31 @@
 // Blanko-Vorlage online laden (über den Proxy-Pfad der eigenen Seite).
 // Wird beim Start im Hintergrund angestoßen und von „Prüfen“ neu geladen.
-// Den Pfad kann static/config.json („vorlage“) auf dem Server umbiegen.
+// Pfad („vorlage“) und angezeigte Quelle („quelle“) kann static/config.json auf dem Server
+// umbiegen – ohne neuen Build.
 import { base } from '$app/paths';
-import { FORM_PROXY_PATH } from './form';
+import { FORM_PROXY_PATH, FORM_URL } from './form';
 import { validateLbv23 } from './lbv23';
 
 export const template = $state<{
   status: 'idle' | 'loading' | 'ok' | 'fail';
   size?: number;
   error?: string;
-}>({ status: 'idle' });
+  /** Offizielle Adresse, wie in den Einstellungen angezeigt */
+  source: string;
+}>({ status: 'idle', source: FORM_URL });
 
 let pending: Promise<ArrayBuffer> | undefined;
 
-/** Adresse der Vorlage: `vorlage` aus config.json (relativ zur App oder absolut), sonst Standard */
+/**
+ * Adresse der Vorlage: `vorlage` aus config.json (relativ zur App oder absolut), sonst Standard.
+ * Übernimmt nebenbei `quelle` für die Anzeige.
+ */
 async function templateUrl(): Promise<string> {
   const app = new URL(`${base}/`, location.origin);
   try {
     const res = await fetch(new URL('config.json', app), { cache: 'no-cache' });
-    const { vorlage } = res.ok ? await res.json() : {};
+    const { vorlage, quelle } = res.ok ? await res.json() : {};
+    if (typeof quelle === 'string' && quelle) template.source = quelle;
     if (typeof vorlage === 'string' && vorlage) return new URL(vorlage, app).href;
   } catch {
     // keine oder ungültige config.json → Standard

@@ -17,14 +17,20 @@ npm run build    # Ausgabe in build/ – für nginx: try_files $uri /index.html;
 BASE_PATH=/edoMehrarbeitNRW npm run build   # für Hosting in einem Unterverzeichnis
 ```
 
+Die ZIP-/tar.gz-Dateien im GitHub-Release werden mit der Repository-Variable `BASE_PATH` gebaut
+(Settings → Secrets and variables → Actions → Variables) und passen nur für diesen Pfad.
+
 ## Struktur
 
-- `src/routes/+layout.svelte` – Sidebar: Neue Erklärung, Verlauf, Neuer Monat, Monate, Einstellungen
-- `src/routes/month/[id]/+page.svelte` – Stunden + Merkmal „V“ eines Monats
+- `src/routes/+layout.svelte` – Sidebar: Neue Erklärung, Verlauf, Neuer Monat, Monate,
+  Neuer Stundenplan, Stundenpläne, Einstellungen
+- `src/routes/month/[id]/+page.svelte` – Stunden + Merkmal „V“ eines Monats, Tagesnachweis
+  (`src/lib/MonthDays.svelte`, `src/lib/days.ts`) wie Anlage 1 zu BASS 21-22 Nr. 21
+- `src/routes/schedule/[id]/+page.svelte` – Stundenplan: Sollstunden Mo–Fr zum Schnellausfüllen
 - `src/routes/declaration/[id]/+page.svelte` – bis zu 6 Monate wählen, Vorschau, Download
 - `src/lib/types.ts` – Datenmodell (Profile, Month, Declaration)
 - `src/lib/store.svelte.ts` – Zustand, localStorage, JSON-Import
-- `src/lib/backup.ts` – JSON-Export/-Import (noch ohne Platz in der Oberfläche)
+- `src/lib/backup.ts` – JSON-Sicherung herunterladen/einlesen (Einstellungen)
 - `src/lib/prefill.ts` – Stammdaten aus dem Link-Hash bzw. `.env`
 - `src/lib/ProfileFields.svelte` – Stammdaten-Felder (Einstellungen und Erklärung)
 - `src/lib/lbv23.ts` – befüllt das Formular (ohne Browser-Abhängigkeiten, in Node testbar)
@@ -95,8 +101,14 @@ Der Pfad lässt sich ohne neuen Build in `config.json` (im Build-Ordner) ändern
 oder als volle Adresse eines Servers, der CORS erlaubt:
 
 ```json
-{ "vorlage": "vorlage/lbva23.pdf" }
+{
+  "vorlage": "vorlage/lbva23.pdf",
+  "quelle": "https://www.bra.nrw.de/system/files/media/document/file/lbva_23_2019_02.pdf"
+}
 ```
+
+`quelle` ist nur die Adresse, die in den Einstellungen angezeigt wird. Ändert sich das PDF beim
+Land, genügt es, `proxy_pass` in nginx und `quelle` anzupassen.
 
 Bei Hosting in einem Unterverzeichnis (`BASE_PATH`) liegt der Proxy-Pfad entsprechend darunter,
 z. B. `location = /edo-mehrarbeit-nrw/vorlage/lbva23.pdf`. Weil die App ein SPA ist, braucht das

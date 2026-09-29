@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
   import { data, byMonth, monthLabel, dateLabel, declarationOf } from '$lib/store.svelte';
@@ -88,7 +89,7 @@
   function remove() {
     closePreview();
     data.declarations = data.declarations.filter((x) => x !== d);
-    goto('/');
+    goto(resolve('/'));
   }
 
   // Beim Wechsel zu einer anderen Erklärung alte Vorschau verwerfen
@@ -123,7 +124,7 @@
             />
             {monthLabel(m.month)} <small>{m.hours} Std.{m.belowThreshold ? ' · V' : ''}</small>
             {#if other}
-              <a class="badge" href="/declaration/{other.id}">
+              <a class="badge" href={resolve('/declaration/[id]', { id: other.id })}>
                 {on ? 'auch' : 'bereits'} in Erklärung vom {dateLabel(other.date)}
               </a>
             {/if}

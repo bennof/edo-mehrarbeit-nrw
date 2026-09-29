@@ -1,7 +1,8 @@
 # Testet jeden Push und Pull Request. Ein Tag v* (z. B. v0.2.0) baut zusätzlich ein Release
-# mit der gebauten SPA als ZIP; der Text der Tag-Nachricht wird zur Release-Beschreibung.
-# Manuell gestartet (Actions → Release → Run workflow) ist es ein Testlauf: ZIP und Release-Text
-# entstehen genauso, landen aber nur als Artefakt am Lauf – ohne Release.
+# mit der gebauten SPA als ZIP und tar.gz; der Text der Tag-Nachricht wird zur
+# Release-Beschreibung. Manuell gestartet (Actions → Release → Run workflow) ist es ein
+# Testlauf: Archive und Release-Text entstehen genauso, landen aber nur als Artefakt am
+# Lauf – ohne Release.
 name: Release
 
 on:
@@ -50,11 +51,16 @@ jobs:
           fi
 
       - run: npm ci
+      # Unterverzeichnis auf dem Server, z. B. /edo-mehrarbeit-nrw – Repository-Variable
+      # (Settings → Secrets and variables → Actions → Variables); leer = Domain-Wurzel
       - run: npm run build
+        env:
+          BASE_PATH: ${{ vars.BASE_PATH }}
 
-      - name: ZIP und Release-Text erstellen
+      - name: Archive und Release-Text erstellen
         run: |
           (cd build && zip -r "../edo-mehrarbeit-nrw-$VERSION.zip" .)
+          tar -czf "edo-mehrarbeit-nrw-$VERSION.tar.gz" -C build .
           # Checkout legt den Tag ohne Nachricht an – annotierten Tag nachladen.
           # Im Testlauf den Tag zur Version nehmen, falls es ihn schon gibt.
           git fetch --force origin "refs/tags/$VERSION:refs/tags/$VERSION" || true
@@ -68,12 +74,15 @@ jobs:
           name: release-test-${{ env.VERSION }}
           path: |
             edo-mehrarbeit-nrw-${{ env.VERSION }}.zip
+            edo-mehrarbeit-nrw-${{ env.VERSION }}.tar.gz
             release-notes.md
 
       - uses: softprops/action-gh-release@v2
         if: github.event_name != 'workflow_dispatch'
         with:
-          files: edo-mehrarbeit-nrw-${{ env.VERSION }}.zip
+          files: |
+            edo-mehrarbeit-nrw-${{ env.VERSION }}.zip
+            edo-mehrarbeit-nrw-${{ env.VERSION }}.tar.gz
           body_path: release-notes.md
           generate_release_notes: true
           # Versionen mit Bindestrich (-alpha, -beta, -rc) als Vorabversion markieren

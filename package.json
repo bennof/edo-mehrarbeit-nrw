@@ -1,7 +1,7 @@
 {
   "name": "edo-mehrarbeit-nrw",
   "private": true,
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Erfassung von Mehrarbeit für Lehrkräfte in NRW und Ausfüllen der LBV-Änderungsmitteilung",
   "license": "MIT",
   "author": "Benjamin Benno Falkner",

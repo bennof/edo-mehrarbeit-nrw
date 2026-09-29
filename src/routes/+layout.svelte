@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import '../app.css';
   import { page } from '$app/state';
   import { afterNavigate, goto, replaceState } from '$app/navigation';
@@ -6,6 +7,7 @@
     data,
     newMonth,
     newDeclaration,
+    newSchedule,
     byMonth,
     monthLabel,
     dateLabel,
@@ -65,25 +67,36 @@
 <div class="app" class:collapsed={!open}>
   <aside class="sidebar" class:mobile-open={mobileOpen}>
     <div class="sidebar-top">
-      <button class="new" onclick={() => goto(`/declaration/${newDeclaration().id}`)}
+      <button
+        class="new"
+        onclick={() => goto(resolve('/declaration/[id]', { id: newDeclaration().id }))}
         >＋ Neue Erklärung</button
       >
     </div>
     <nav>
       <p class="label">Verlauf</p>
       {#each data.declarations as d (d.id)}
-        <a class="item" class:active={page.params.id === d.id} href="/declaration/{d.id}">
+        <a
+          class="item"
+          class:active={page.params.id === d.id}
+          href={resolve('/declaration/[id]', { id: d.id })}
+        >
           {dateLabel(d.date)} <small>{span(d)}</small>
         </a>
       {:else}
         <p class="empty">Noch keine Erklärung</p>
       {/each}
 
-      <button class="new sub" onclick={() => goto(`/month/${newMonth().id}`)}>＋ Neuer Monat</button
+      <button class="new sub" onclick={() => goto(resolve('/month/[id]', { id: newMonth().id }))}
+        >＋ Neuer Monat</button
       >
       <p class="label">Monate</p>
       {#each months as m (m.id)}
-        <a class="item" class:active={page.params.id === m.id} href="/month/{m.id}">
+        <a
+          class="item"
+          class:active={page.params.id === m.id}
+          href={resolve('/month/[id]', { id: m.id })}
+        >
           {monthLabel(m.month)}
           <small
             >{m.hours} Std.{m.belowThreshold ? ' · V' : ''}{declarationOf(m.id)
@@ -93,6 +106,25 @@
         </a>
       {:else}
         <p class="empty">Noch kein Monat erfasst</p>
+      {/each}
+
+      <button
+        class="new sub"
+        onclick={() => goto(resolve('/schedule/[id]', { id: newSchedule().id }))}
+        >＋ Neuer Stundenplan</button
+      >
+      <p class="label">Stundenpläne</p>
+      {#each data.schedules as s (s.id)}
+        <a
+          class="item"
+          class:active={page.params.id === s.id}
+          href={resolve('/schedule/[id]', { id: s.id })}
+        >
+          {s.name || 'Ohne Namen'}
+          <small>{s.soll.reduce((a, b) => a + (b || 0), 0)} Std./Woche</small>
+        </a>
+      {:else}
+        <p class="empty">Noch kein Stundenplan</p>
       {/each}
     </nav>
     <div class="sidebar-bottom">
@@ -108,7 +140,7 @@
   <main>
     <header>
       <button class="icon" aria-label="Seitenleiste umschalten" onclick={toggle}>☰</button>
-      <a class="title" href="/">Mehrarbeit NRW</a>
+      <a class="title" href={resolve('/')}>Mehrarbeit NRW</a>
     </header>
     {@render children()}
   </main>
