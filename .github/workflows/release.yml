@@ -1,0 +1,62 @@
+# Testet jeden Push und Pull Request. Ein Tag v* (z. B. v0.2.0) baut zusätzlich ein Release
+# mit der gebauten SPA als ZIP; der Text der Tag-Nachricht wird zur Release-Beschreibung.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check
+      - run: npm run build
+
+  release:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Tag passt zur Version in package.json
+        run: |
+          VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME passt nicht zu package.json ($VERSION)"
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: ZIP und Release-Text erstellen
+        run: |
+          (cd build && zip -r "../edo-mehrarbeit-nrw-$GITHUB_REF_NAME.zip" .)
+          # Checkout legt den Tag ohne Nachricht an – annotierten Tag nachladen
+          git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          git tag -l --format='%(contents)' "$GITHUB_REF_NAME" > release-notes.md
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: edo-mehrarbeit-nrw-${{ github.ref_name }}.zip
+          body_path: release-notes.md
+          generate_release_notes: true
+          # Versionen mit Bindestrich (-alpha, -beta, -rc) als Vorabversion markieren
+          prerelease: ${{ contains(github.ref_name, '-') }}
