@@ -91,6 +91,23 @@ weiterleitet. Dabei geht nur die Anfrage nach der leeren Vorlage an den Server �
   }
   ```
 
+Der Pfad lässt sich ohne neuen Build in `config.json` (im Build-Ordner) ändern – relativ zur App
+oder als volle Adresse eines Servers, der CORS erlaubt:
+
+```json
+{ "vorlage": "vorlage/lbva23.pdf" }
+```
+
+Bei Hosting in einem Unterverzeichnis (`BASE_PATH`) liegt der Proxy-Pfad entsprechend darunter,
+z. B. `location = /edo-mehrarbeit-nrw/vorlage/lbva23.pdf`. Weil die App ein SPA ist, braucht das
+Verzeichnis einen Fallback auf `index.html`, sonst liefert ein Neuladen auf Unterseiten 404:
+
+```nginx
+location /edo-mehrarbeit-nrw/ {
+  try_files $uri $uri/ /edo-mehrarbeit-nrw/index.html;
+}
+```
+
 Die App lädt die Vorlage beim Start im Hintergrund und prüft, ob alle benötigten Formularfelder
 vorhanden sind. „Prüfen“ in den Einstellungen lädt sie neu. Ohne Weiterleitung (z. B. auf GitHub
 Pages) kann kein PDF erzeugt werden.
