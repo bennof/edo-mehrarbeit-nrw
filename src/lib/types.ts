@@ -42,6 +42,15 @@ export interface Profile {
   rateKey: RateKey;
   /** 0 = keine Mehrarbeit an weiteren Schulen */
   otherSchools: number;
+  // Nur für den Nachweis nach Anlage 1
+  /** Amts-/Dienstbezeichnung, z. B. Studienrat */
+  title: string;
+  /** Besoldungs-/Vergütungsgruppe, z. B. A 13 */
+  payGrade: string;
+  /** Prüfziffer zur LBV-Personalnummer */
+  prz: string;
+  /** Vergütung je Einzelstunde in €, wie eingegeben (z. B. „34,56“) */
+  hourlyRate: string;
 }
 
 export interface Month {

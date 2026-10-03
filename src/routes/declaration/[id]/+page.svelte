@@ -4,6 +4,8 @@
   import { goto } from '$app/navigation';
   import { data, byMonth, monthLabel, dateLabel, declarationOf } from '$lib/store.svelte';
   import { buildPdf } from '$lib/pdf';
+  import { PdfPreview } from '$lib/pdfPreview.svelte';
+  import PdfToolbar from '$lib/PdfToolbar.svelte';
   import ProfileFields from '$lib/ProfileFields.svelte';
   import type { Month, Profile } from '$lib/types';
 
@@ -26,68 +28,23 @@
     REQUIRED.filter(([key]) => !String(data.profile[key]).trim()).map(([, label]) => label)
   );
 
-  let pdfUrl = $state<string | null>(null);
-  let pdfFile = $state<File | null>(null);
-  let busy = $state(false);
-  let error = $state('');
-
+  const pdf = new PdfPreview();
   const fileName = $derived(`Mehrarbeit_${d?.date ?? ''}.pdf`);
-  // System-Teilen (Handy: Drucken, Dateien, Mail …) nur anbieten, wenn der Browser Dateien teilen kann
-  const canShare = $derived(!!pdfFile && !!navigator.canShare?.({ files: [pdfFile] }));
-  let printFrame = $state<HTMLIFrameElement>();
 
   function toggleMonth(m: Month) {
     if (!d) return;
     d.monthIds = d.monthIds.includes(m.id)
       ? d.monthIds.filter((x) => x !== m.id)
       : [...d.monthIds, m.id];
-    closePreview();
+    pdf.close();
   }
 
-  async function preview() {
-    if (!d) return;
-    busy = true;
-    error = '';
-    try {
-      closePreview();
-      const blob = await buildPdf(data.profile, selected, d);
-      pdfFile = new File([blob], fileName, { type: 'application/pdf' });
-      pdfUrl = URL.createObjectURL(blob);
-    } catch (e) {
-      error = `PDF konnte nicht erzeugt werden: ${e instanceof Error ? e.message : e}`;
-    }
-    busy = false;
-  }
-
-  function closePreview() {
-    if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-    pdfUrl = null;
-    pdfFile = null;
-  }
-
-  async function share() {
-    if (!pdfFile) return;
-    try {
-      await navigator.share({ files: [pdfFile], title: fileName });
-    } catch (e) {
-      // Abbrechen im Teilen-Menü ist kein Fehler
-      if (!(e instanceof DOMException && e.name === 'AbortError')) {
-        error = `Teilen fehlgeschlagen: ${e instanceof Error ? e.message : e}`;
-      }
-    }
-  }
-
-  // Unsichtbarer Frame mit dem PDF; wo der Browser das nicht drucken kann, PDF in neuem Tab öffnen
-  function print() {
-    try {
-      printFrame?.contentWindow?.print();
-    } catch {
-      window.open(pdfUrl!, '_blank');
-    }
+  function preview() {
+    if (d) pdf.open(() => buildPdf(data.profile, selected, d), fileName);
   }
 
   function remove() {
-    closePreview();
+    pdf.close();
     data.declarations = data.declarations.filter((x) => x !== d);
     goto(resolve('/'));
   }
@@ -95,7 +52,7 @@
   // Beim Wechsel zu einer anderen Erklärung alte Vorschau verwerfen
   $effect(() => {
     page.params.id;
-    return closePreview;
+    return () => pdf.close();
   });
 </script>
 
@@ -103,8 +60,8 @@
   {#if d}
     <h1>Erklärung vom {dateLabel(d.date)}</h1>
 
-    {#if pdfUrl}
-      <object class="pdf" data={pdfUrl} type="application/pdf" title="PDF-Vorschau">
+    {#if pdf.url}
+      <object class="pdf" data={pdf.url} type="application/pdf" title="PDF-Vorschau">
         <p class="hint">Dein Browser zeigt keine PDF-Vorschau an. Lade die Datei herunter.</p>
       </object>
     {:else}
@@ -158,7 +115,7 @@
         </div>
       </div>
     {/if}
-    {#if error}<p class="error">{error}</p>{/if}
+    {#if pdf.error}<p class="error">{pdf.error}</p>{/if}
   {:else}
     <p class="empty">Erklärung nicht gefunden.</p>
   {/if}
@@ -166,39 +123,11 @@
 
 {#if d}
   <div class="bottom-bar">
-    {#if pdfUrl}
-      <button class="secondary" onclick={closePreview}>Bearbeiten</button>
-      <span class="spacer"></span>
-      <button class="tool" title="Drucken" aria-label="Drucken" onclick={print}>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
-          />
-          <rect x="6" y="14" width="12" height="8" />
-        </svg>
-      </button>
-      <a
-        class="tool"
-        title="Herunterladen"
-        aria-label="Herunterladen"
-        href={pdfUrl}
-        download={fileName}
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-        </svg>
-      </a>
-      {#if canShare}
-        <button class="tool primary" title="Teilen" aria-label="Teilen" onclick={share}>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" />
-          </svg>
-        </button>
-      {/if}
-      <iframe class="print-frame" bind:this={printFrame} src={pdfUrl} title="Druckansicht"></iframe>
+    {#if pdf.url}
+      <PdfToolbar preview={pdf} />
     {:else}
-      <button class="primary" disabled={busy || !selected.length} onclick={preview}>
-        {busy ? 'Erzeuge …' : 'Vorschau'}
+      <button class="primary" disabled={pdf.busy || !selected.length} onclick={preview}>
+        {pdf.busy ? 'Erzeuge …' : 'Vorschau'}
       </button>
     {/if}
   </div>

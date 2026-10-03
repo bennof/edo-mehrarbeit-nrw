@@ -19,7 +19,11 @@ const empty = (): AppData => ({
     firstName: '',
     birthDate: '', // YYYY-MM-DD
     rateKey: 4, // Schlüssel Mehrarbeitsstundensatz 1–4
-    otherSchools: 0 // 0 = nein
+    otherSchools: 0, // 0 = nein
+    title: '',
+    payGrade: '',
+    prz: '',
+    hourlyRate: ''
   },
   months: [],
   schedules: [],

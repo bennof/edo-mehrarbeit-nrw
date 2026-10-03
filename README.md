@@ -37,6 +37,8 @@ Die ZIP-/tar.gz-Dateien im GitHub-Release werden mit der Repository-Variable `BA
 - `src/lib/info.ts`, `src/lib/InfoCarousel.svelte` – Hinweise aus `static/info.json`
 - `src/lib/form.ts`, `src/lib/template.svelte.ts` – Herkunft und Laden der Formularvorlage
 - `src/lib/pdf.ts` – erzeugt das ausgefüllte PDF
+- `src/lib/anlage1.ts` – Nachweis nach Anlage 1 zu BASS 21-22 Nr. 21: ausfüllbares PDF erzeugen
+  und befüllen; `npm run anlage1` schreibt das leere Formular nach `static/anlage1.pdf`
 - `src/lib/SettingsDialog.svelte` – Stammdaten, Speichern an/aus
 
 ## Datenmodell (localStorage `mehrarbeit-data`)

@@ -51,8 +51,10 @@
       <span>
         Im Nachweis nach Tagen (wie Anlage 1 zum Mehrarbeitserlass) Ist- und Sollstunden je Tag
         eintragen oder aus dem Stundenplan übernehmen und nur Abweichungen ändern. Die geleisteten
-        Mehrarbeitsstunden werden laufend berechnet; <em>Übertragen</em> setzt sie oben ein. Bei Bedarf
-        Merkmal „V“ (unterhalb der Bagatellgrenze) setzen.
+        Mehrarbeitsstunden werden laufend berechnet; <em>Übertragen</em> setzt sie oben ein. Bei
+        Bedarf Merkmal „V“ (unterhalb der Bagatellgrenze) setzen. Unten erzeugt
+        <em>Nachweis (Anlage 1)</em> das Formular für die Schulleitung – ansehen, drucken, herunterladen
+        oder teilen.
       </span>
     </li>
     <li>

@@ -17,6 +17,10 @@
     <label>Schulnummer <input maxlength="6" bind:value={profile.schoolNumber} /></label>
     <label>Aktenzeichen <input maxlength="35" bind:value={profile.fileNumber} /></label>
   </div>
+  <p class="hint">
+    Aktenzeichen: Wird von der Schule/Dienststelle vergeben. Falls dir kein Aktenzeichen bekannt
+    ist, lass dieses Feld frei.
+  </p>
   <div class="row">
     <label>Bearbeiter <input bind:value={profile.clerk} /></label>
     <label>Telefon-Durchwahl <input bind:value={profile.phone} /></label>
@@ -37,6 +41,23 @@
     <label>Geburtsdatum <input type="date" bind:value={profile.birthDate} /></label>
     <label>LBV-Personalnummer <input maxlength="10" bind:value={profile.lbvNumber} /></label>
   </div>
+  <div class="row">
+    <label>Amts-/Dienstbezeichnung <input bind:value={profile.title} /></label>
+    <label>BesGr./VergGr. <input bind:value={profile.payGrade} placeholder="z. B. A 13" /></label>
+  </div>
+  <div class="row">
+    <label>
+      Prüfziffer (Prz) <small>zur LBV-Personalnummer</small>
+      <input maxlength="2" bind:value={profile.prz} />
+    </label>
+    <label>
+      Vergütung je Einzelstunde (€)
+      <input inputmode="decimal" bind:value={profile.hourlyRate} placeholder="z. B. 34,56" />
+    </label>
+  </div>
+  <p class="hint">
+    Amtsbezeichnung, BesGr., Prz und Vergütung stehen nur im Nachweis nach Anlage 1.
+  </p>
   <label>
     Minuten je Unterrichtsstunde
     <input type="number" step="0.01" min="0" bind:value={profile.minutesPerLesson} />
