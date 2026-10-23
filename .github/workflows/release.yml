@@ -1,89 +1,91 @@
-# Testet jeden Push und Pull Request. Ein Tag v* (z. B. v0.2.0) baut zusätzlich ein Release
-# mit der gebauten SPA als ZIP und tar.gz; der Text der Tag-Nachricht wird zur
-# Release-Beschreibung. Manuell gestartet (Actions → Release → Run workflow) ist es ein
-# Testlauf: Archive und Release-Text entstehen genauso, landen aber nur als Artefakt am
-# Lauf – ohne Release.
+# Automatisch nur für neue v*-Tags; manuell für einen vorhandenen Tag.
 name: Release
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
-  pull_request:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Vorhandener Release-Tag, z. B. v0.1.0-beta.1'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run check
-      - run: npm run build
-
   release:
-    needs: test
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event.created == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Tag passt zur Version in package.json
+      - name: Tag-Format prüfen
         run: |
-          VERSION="v$(node -p "require('./package.json').version")"
-          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-          # Testlauf: kein Tag, der Name kommt aus package.json
-          [ "$GITHUB_REF_TYPE" = tag ] || exit 0
-          if [ "$VERSION" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME passt nicht zu package.json ($VERSION)"
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo '::error::Ein Versions-Tag wie v0.1.0 oder v0.1.0-beta.1 ist erforderlich.'
             exit 1
           fi
 
+      - uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Tag und Paketversionen prüfen
+        run: |
+          VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$VERSION" != "$RELEASE_TAG" ]; then
+            echo "::error::Tag $RELEASE_TAG passt nicht zu package.json ($VERSION)"
+            exit 1
+          fi
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          if (pkg.version !== lock.version || pkg.version !== lock.packages[''].version) {
+            throw new Error('Versionen in package.json und package-lock.json stimmen nicht überein.');
+          }
+          NODE
+
       - run: npm ci
-      # Unterverzeichnis auf dem Server, z. B. /edo-mehrarbeit-nrw – Repository-Variable
-      # (Settings → Secrets and variables → Actions → Variables); leer = Domain-Wurzel
+      - run: npm run lint
+      - run: npm run check
+      # Repository-Variable BASE_PATH: leer = Domain-Wurzel.
       - run: npm run build
         env:
           BASE_PATH: ${{ vars.BASE_PATH }}
 
       - name: Archive und Release-Text erstellen
         run: |
-          (cd build && zip -r "../edo-mehrarbeit-nrw-$VERSION.zip" .)
-          tar -czf "edo-mehrarbeit-nrw-$VERSION.tar.gz" -C build .
-          # Checkout legt den Tag ohne Nachricht an – annotierten Tag nachladen.
-          # Im Testlauf den Tag zur Version nehmen, falls es ihn schon gibt.
-          git fetch --force origin "refs/tags/$VERSION:refs/tags/$VERSION" || true
-          git tag -l --format='%(contents)' "$VERSION" > release-notes.md
-          cat release-notes.md
+          (cd build && zip -r "../edo-mehrarbeit-nrw-$RELEASE_TAG.zip" .)
+          tar -czf "edo-mehrarbeit-nrw-$RELEASE_TAG.tar.gz" -C build .
+          # Nur annotierte Tags besitzen einen eigenen Release-Text.
+          if [ "$(git cat-file -t "refs/tags/$RELEASE_TAG")" = tag ]; then
+            git for-each-ref --format='%(contents)' "refs/tags/$RELEASE_TAG" > release-notes.md
+          else
+            : > release-notes.md
+          fi
 
-      - name: Testlauf – Ergebnis als Artefakt
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
+      - uses: softprops/action-gh-release@v3
         with:
-          name: release-test-${{ env.VERSION }}
-          path: |
-            edo-mehrarbeit-nrw-${{ env.VERSION }}.zip
-            edo-mehrarbeit-nrw-${{ env.VERSION }}.tar.gz
-            release-notes.md
-
-      - uses: softprops/action-gh-release@v2
-        if: github.event_name != 'workflow_dispatch'
-        with:
+          tag_name: ${{ env.RELEASE_TAG }}
           files: |
-            edo-mehrarbeit-nrw-${{ env.VERSION }}.zip
-            edo-mehrarbeit-nrw-${{ env.VERSION }}.tar.gz
+            edo-mehrarbeit-nrw-${{ env.RELEASE_TAG }}.zip
+            edo-mehrarbeit-nrw-${{ env.RELEASE_TAG }}.tar.gz
+          fail_on_unmatched_files: true
           body_path: release-notes.md
           generate_release_notes: true
-          # Versionen mit Bindestrich (-alpha, -beta, -rc) als Vorabversion markieren
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ contains(env.RELEASE_TAG, '-') }}

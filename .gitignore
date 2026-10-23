@@ -8,5 +8,10 @@ node_modules
 !.env.example
 vite.config.*.timestamp-*
 
-# Ursprüngliche Vorlage
+# Archive und lokale Build-Artefakte
 *.zip
+*.tar.gz
+/release-notes.md
+*.log
+/.vite/
+/coverage/

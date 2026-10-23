@@ -1,8 +1,8 @@
 [
   {
-    "title": "Willkommen zur Alpha-Version 0.1.0",
-    "date": "2026-09-29",
-    "body": "<p>Mehrarbeit Tag für Tag nachweisen wie in Anlage 1 zum Mehrarbeitserlass, Wochen per Stundenplan vorausfüllen, Erklärung zusammenstellen und die LBV-Änderungsmitteilung als PDF erzeugen – das funktioniert bereits. Alle Daten bleiben in deinem Browser.</p><p>Es ist ein früher Testlauf: Bitte prüfe jedes PDF sorgfältig, bevor du es einreichst. <a href='mailto:contact@falkner.xyz?subject=edo-mehrarbeit-nrw%23feedback'>Rückmeldungen und Fehlerberichte</a> helfen sehr.</p>"
+    "title": "Willkommen zur Beta-Version 0.1.0-beta.1",
+    "date": "2026-10-23",
+    "body": "<p>Mehrarbeit Tag für Tag nachweisen wie in Anlage 1 zum Mehrarbeitserlass, Wochen per Stundenplan vorausfüllen, Erklärung zusammenstellen und die LBV-Änderungsmitteilung als PDF erzeugen – das funktioniert bereits. Alle Daten bleiben in deinem Browser.</p><p>Die Beta-Phase startet: Die bisherigen Tests liefen zuletzt ohne bekannte Probleme. Bitte teste die App im Alltag und prüfe jedes PDF sorgfältig, bevor du es einreichst. <a href='mailto:contact@falkner.xyz?subject=edo-mehrarbeit-nrw%23feedback'>Rückmeldungen und Fehlerberichte</a> helfen sehr.</p>"
   },
   {
     "title": "Ab wann wird Mehrarbeit bezahlt?",

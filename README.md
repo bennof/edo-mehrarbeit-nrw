@@ -5,13 +5,20 @@ Erfassung von Mehrarbeit (Lehrkräfte NRW) und Ausfüllen der LBV-Änderungsmitt
 
 Reine Client-SPA (SvelteKit + Svelte 5 + TypeScript): Alle Daten bleiben im Browser.
 
+Aktueller Stand: **0.1.0-beta.1** – erste Beta-Version. Rückmeldungen aus dem Alltag sind
+willkommen; bitte erzeugte PDFs vor dem Einreichen prüfen.
+
 Die leere Formularvorlage wird nicht mitverteilt, sondern beim Start online geladen (siehe
 [Formularvorlage](#formularvorlage)).
 
+Voraussetzung: **Node.js 24** (mit nvm: `nvm use`). `.npmrc` erzwingt die in
+`package.json` angegebene Node-Version.
+
 ```sh
-npm install
+npm ci
 npm run dev      # http://localhost:5173
 npm run check    # TypeScript-/Svelte-Prüfung
+npm run lint     # Formatierung prüfen
 npm run format   # Prettier
 npm run build    # Ausgabe in build/ – für nginx: try_files $uri /index.html;
 BASE_PATH=/edoMehrarbeitNRW npm run build   # für Hosting in einem Unterverzeichnis
@@ -175,16 +182,26 @@ ist die Liste leer, wird nichts angezeigt.
 
 ## Release
 
-1. Version in `package.json` erhöhen (z. B. `npm version minor --no-git-tag-version`).
-2. `npm run commit-version` – führt aus:
-   `git add .` → `git commit -m vX.Y.Z` → `git tag -a vX.Y.Z` (Editor öffnet sich für den
-   Tag-Text) → `git push origin HEAD` → `git push origin vX.Y.Z`.
-3. Die GitHub Action `.github/workflows/release.yml` testet (Prettier, svelte-check, Build),
-   prüft, dass Tag und `package.json` übereinstimmen, und legt ein Release mit
-   `edo-mehrarbeit-nrw-vX.Y.Z.zip` (Inhalt von `build/`) an. Der Tag-Text wird die
-   Release-Beschreibung.
+Der Workflow `.github/workflows/release.yml` startet automatisch nur beim Push eines **neuen
+`v*`-Tags**, außerdem auf manuellen Aufruf. Branch-Pushes und Pull Requests starten ihn nicht.
+Alle Läufe verwenden **Node.js 24** und prüfen Formatierung, TypeScript/Svelte und den Build.
 
-Pushes auf `main` und Pull Requests werden nur getestet.
+1. Version samt Lockfile erhöhen, z. B. `npm version minor --no-git-tag-version`.
+   Für eine Vorabversion: `npm version 0.1.0-beta.1 --no-git-tag-version`.
+2. Änderungen prüfen und `npm run commit-version` ausführen. Das Skript nimmt **alle
+   Änderungen** mit `git add .` auf, committet sie mit der Version als Nachricht, erstellt einen
+   annotierten Tag (Editor für den Release-Text) und pusht Commit und Tag nach `origin`.
+3. Die Action prüft, dass Tag, `package.json` und `package-lock.json` zusammenpassen, und
+   veröffentlicht `edo-mehrarbeit-nrw-vX.Y.Z.zip` und `.tar.gz` mit dem Inhalt von `build/`.
+   Der Text eines annotierten Tags ergänzt die automatisch generierten Release-Notizen.
+
+Versionen mit einem Bindestrich werden als **Prerelease** markiert, z. B. `v0.1.0-beta.1`.
+Versionen ohne Bindestrich, z. B. `v0.1.0`, werden reguläre Releases.
+
+**Manuell:** Unter Actions → Release → Run workflow im Feld `tag` einen vorhandenen Tag
+angeben. Gebaut wird der Stand dieses Tags. Der Lauf veröffentlicht ebenfalls ein echtes
+Release bzw. aktualisiert dessen Dateien, falls es schon existiert. Der Workflow muss für
+den manuellen Start auf dem Default-Branch vorhanden sein.
 
 ## Lizenz
 
