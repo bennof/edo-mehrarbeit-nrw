@@ -30,6 +30,8 @@ npm run check    # TypeScript-/Svelte-Prüfung
 npm run lint     # Formatierung prüfen
 npm run format   # Prettier
 npm run licenses # Lizenzen aller Abhängigkeiten → static/THIRD-PARTY-LICENSES.txt (läuft vor dev/build automatisch)
+npm run clean     # erzeugte Dateien löschen (build/, .svelte-kit/, Lizenzdateien, Archive)
+npm run clean:all # zusätzlich node_modules (danach npm ci)
 npm run build    # Ausgabe in build/ – läuft unter jedem Pfad, kein Server-Fallback nötig
 ```
 

@@ -18,6 +18,8 @@
     "format": "prettier --write .",
     "lint": "prettier --check .",
     "licenses": "node scripts/third-party-licenses.mjs",
+    "clean": "node scripts/clean.mjs",
+    "clean:all": "node scripts/clean.mjs --all",
     "commit-version": "node scripts/commit-version.mjs",
     "anlage1": "node --experimental-strip-types --no-warnings scripts/build-anlage1.mts"
   },
