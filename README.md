@@ -30,12 +30,14 @@ npm run check    # TypeScript-/Svelte-Prüfung
 npm run lint     # Formatierung prüfen
 npm run format   # Prettier
 npm run licenses # Lizenzen aller Abhängigkeiten → static/THIRD-PARTY-LICENSES.txt (läuft vor dev/build automatisch)
-npm run build    # Ausgabe in build/ – für nginx: try_files $uri /index.html;
-BASE_PATH=/edoMehrarbeitNRW npm run build   # für Hosting in einem Unterverzeichnis
+npm run build    # Ausgabe in build/ – läuft unter jedem Pfad, kein Server-Fallback nötig
 ```
 
-Die ZIP-/tar.gz-Dateien im GitHub-Release werden mit der Repository-Variable `BASE_PATH` gebaut
-(Settings → Secrets and variables → Actions → Variables) und passen nur für diesen Pfad.
+Die App nutzt einen Hash-Router (`#/month/…`) und relative Pfade in `build/index.html`
+(`scripts/relative-base.mjs`). Derselbe Build – auch das ZIP/tar.gz aus dem GitHub-Release – läuft
+deshalb unter der Domain-Wurzel genauso wie in einem Unterverzeichnis (z. B.
+`https://example.org/edo-mehrarbeit-nrw/`); ein Server-Fallback auf `index.html` ist nicht nötig.
+Der Server muss nur `index.html` unter dem Verzeichnis ausliefern.
 
 ## Rechtliche Seiten
 
@@ -136,15 +138,8 @@ oder als volle Adresse eines Servers, der CORS erlaubt:
 `quelle` ist nur die Adresse, die in den Einstellungen angezeigt wird. Ändert sich das PDF beim
 Land, genügt es, `proxy_pass` in nginx und `quelle` anzupassen.
 
-Bei Hosting in einem Unterverzeichnis (`BASE_PATH`) liegt der Proxy-Pfad entsprechend darunter,
-z. B. `location = /edo-mehrarbeit-nrw/vorlage/lbva23.pdf`. Weil die App ein SPA ist, braucht das
-Verzeichnis einen Fallback auf `index.html`, sonst liefert ein Neuladen auf Unterseiten 404:
-
-```nginx
-location /edo-mehrarbeit-nrw/ {
-  try_files $uri $uri/ /edo-mehrarbeit-nrw/index.html;
-}
-```
+Bei Hosting in einem Unterverzeichnis liegt der Proxy-Pfad entsprechend darunter, z. B.
+`location = /edo-mehrarbeit-nrw/vorlage/lbva23.pdf`.
 
 Die App lädt die Vorlage beim Start im Hintergrund und prüft, ob alle benötigten Formularfelder
 vorhanden sind. „Prüfen“ in den Einstellungen lädt sie neu. Ohne Weiterleitung (z. B. auf GitHub
@@ -157,7 +152,7 @@ entfernt den Hash aus der Adresszeile. Der Hash-Teil wird vom Browser nie an den
 geschickt – anders als Query-Parameter (`?…`).
 
 ```
-https://…/#schulnummer=196721&bearbeiter=Herr+Mustermann&dienststelle=Zeile+1%0AZeile+2
+https://…/#/?schulnummer=196721&bearbeiter=Herr+Mustermann&dienststelle=Zeile+1%0AZeile+2
 ```
 
 | Parameter                                                        | Feld                                                                              |
@@ -251,7 +246,7 @@ Im zugehörigen Google-Cloud-Projekt:
 1. Google Drive API aktivieren und den OAuth-Zustimmungsbildschirm konfigurieren.
 2. OAuth-Client vom Typ **Webanwendung** verwenden; unter autorisierten JavaScript-Quellen
    die tatsächlichen Origins eintragen, z. B. `http://localhost:5173` sowie die produktive
-   HTTPS-Origin (ohne Unterpfad, auch bei `BASE_PATH`).
+   HTTPS-Origin (ohne Unterpfad, auch bei Hosting in einem Unterverzeichnis).
 3. Im Testmodus die verwendeten Google-Konten als Testnutzer freischalten.
 
 Die App fordert ausschließlich `drive.file` an und erkennt ihre Ordner und Sicherungen über

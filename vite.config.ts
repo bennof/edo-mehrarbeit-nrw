@@ -24,7 +24,7 @@ function prefillLink(hash: string): Plugin {
 // In Produktion übernimmt das der Webserver, siehe README.
 const form = new URL(FORM_URL);
 const formProxy = {
-  [`${process.env.BASE_PATH ?? ''}${FORM_PROXY_PATH}`]: {
+  [FORM_PROXY_PATH]: {
     target: form.origin,
     changeOrigin: true,
     rewrite: () => form.pathname

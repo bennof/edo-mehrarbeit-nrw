@@ -63,11 +63,9 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run check
-      # Repository-Variable BASE_PATH: leer = Domain-Wurzel. `npm run build` erzeugt vorher
+      # Relative Pfade (Hash-Router): derselbe Build läuft unter jedem Pfad. `npm run build` erzeugt vorher
       # THIRD-PARTY-LICENSES.txt (bricht bei unverträglicher Lizenz ab) und legt sie samt LICENSE.txt ins Archiv.
       - run: npm run build
-        env:
-          BASE_PATH: ${{ vars.BASE_PATH }}
 
       - name: Archive und Release-Text erstellen
         run: |

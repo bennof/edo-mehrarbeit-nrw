@@ -16,7 +16,9 @@
   $effect(() => (open ? dlg.showModal() : dlg?.close()));
 
   // Link zur App mit den Angaben der Dienststelle im Hash – der Server sieht davon nichts
-  const shareUrl = $derived(`${location.origin}${base}/${buildShareHash(data.profile)}`);
+  const shareUrl = $derived(
+    `${location.origin}${location.pathname}${buildShareHash(data.profile)}`
+  );
   let sharing = $state(false);
   let copied = $state(false);
   let shareBox = $state<HTMLElement>();

@@ -37,7 +37,7 @@
   // replaceState wirft einen Fehler.
   afterNavigate(({ type }) => {
     if (type !== 'enter' || !prefilled) return;
-    replaceState(page.url.pathname + page.url.search, page.state);
+    replaceState(`#${page.url.pathname}`, page.state);
     settingsOpen = true;
   });
 

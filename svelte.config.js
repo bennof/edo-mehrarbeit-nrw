@@ -7,7 +7,8 @@ export default {
   kit: {
     // SPA: eine index.html, alle Pfade fallen darauf zurück
     adapter: adapter({ fallback: 'index.html' }),
-    // Für Hosting in einem Unterverzeichnis (z. B. GitHub Pages): BASE_PATH=/repo-name
-    paths: { base: /** @type {'' | `/${string}`} */ (process.env.BASE_PATH ?? '') }
+    // Hash-Router: Routen stehen im #-Teil, die App läuft unter jedem Pfad ohne Server-Fallback.
+    // Die Pfade in build/index.html macht scripts/relative-base.mjs relativ (siehe package.json).
+    router: { type: 'hash' }
   }
 };

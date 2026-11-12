@@ -1,4 +1,5 @@
-// Stammdaten per Link vorbelegen: …/#schulnummer=123456&dienststelle=…
+// Stammdaten per Link vorbelegen: …/#/?schulnummer=123456&dienststelle=…
+// (Hash-Router: Route und Parameter stehen im Hash, ältere Links mit #schulnummer=… gehen weiter.)
 // Der Hash-Teil wird nie an den Server geschickt. In .env heißen die Werte gleich, nur groß.
 import type { Profile, RateKey } from './types.ts';
 
@@ -20,9 +21,10 @@ export const PREFILL_PARAMS = {
 
 type Param = keyof typeof PREFILL_PARAMS;
 
-/** Hash (#a=1&b=2) → Teil-Profil; ungültige Zahlen werden ignoriert */
+/** Hash (#/?a=1&b=2 oder #a=1&b=2) → Teil-Profil; ungültige Zahlen werden ignoriert */
 export function parsePrefill(hash: string): Partial<Profile> {
-  const params = new URLSearchParams(hash.replace(/^#/, ''));
+  const raw = hash.replace(/^#/, '');
+  const params = new URLSearchParams(raw.startsWith('/') ? raw.split('?')[1] : raw);
   const out: Partial<Record<keyof Profile, unknown>> = {};
   for (const [param, key] of Object.entries(PREFILL_PARAMS)) {
     const value = params.get(param);
@@ -58,7 +60,7 @@ function toHash(get: (param: Param) => string | undefined, params: Param[]): str
     if (value) search.set(param, value);
   }
   const s = search.toString();
-  return s ? `#${s}` : '';
+  return s ? `#/?${s}` : '';
 }
 
 /** Werte (Schlüssel wie in .env, z. B. SCHULNUMMER) → Hash für einen Link */
