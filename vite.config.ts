@@ -1,6 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { buildPrefillHash } from './src/lib/prefill.ts';
+import { legalPages } from './scripts/legal-pages.ts';
 import { FORM_PROXY_PATH, FORM_URL } from './src/lib/form.ts';
 
 // Dev-Server: Link mit den Stammdaten aus .env ausgeben (landen nicht im Bundle)
@@ -30,8 +31,15 @@ const formProxy = {
   }
 };
 
-export default defineConfig(({ mode }) => ({
-  plugins: [sveltekit(), prefillLink(buildPrefillHash(loadEnv(mode, process.cwd(), '')))],
-  server: { proxy: formProxy },
-  preview: { proxy: formProxy }
-}));
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    plugins: [sveltekit(), legalPages(mode), prefillLink(buildPrefillHash(env))],
+    // Nur die öffentliche OAuth-ID freigeben, niemals das Client-Secret.
+    define: {
+      __GOOGLE_CLIENT_ID__: JSON.stringify(env.EDO_GOOGLE_CLIENT_ID ?? '')
+    },
+    server: { port: Number(env.DEV_PORT) || 5173, proxy: formProxy },
+    preview: { proxy: formProxy }
+  };
+});

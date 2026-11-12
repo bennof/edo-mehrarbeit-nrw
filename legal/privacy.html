@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Datenschutzerklärung – Mehrarbeit NRW</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <script>
+      // Im Einstellungsdialog der App eingebettet: Navigation ausblenden
+      if (self !== top) document.documentElement.classList.add('embedded');
+    </script>
+    <style>
+      :root {
+        --bg: #fff;
+        --text: #1c1c1a;
+        --muted: #6e6e69;
+        --border: #e2e2de;
+        --accent: #2e86b8;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1b1b1a;
+          --text: #ececea;
+          --muted: #9a9a95;
+          --border: #33332f;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.6 system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      nav img {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+      }
+      a {
+        color: var(--accent);
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin-top: 2rem;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      footer a {
+        margin-right: 1rem;
+      }
+      .todo {
+        background: #fff3c4;
+        color: #5c4a00;
+        padding: 0 4px;
+        border-radius: 3px;
+      }
+      .embedded nav,
+      .embedded footer {
+        display: none;
+      }
+      .embedded main {
+        padding-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <img src="logo.png" alt="" width="28" height="28" /><a href="./"
+          >← Zur App „Mehrarbeit NRW“</a
+        >
+      </nav>
+      <h1>Datenschutzerklärung</h1>
+      <h2>1. Verantwortlicher</h2>
+      <p>{{NAME}}, {{STREET}}, {{ZIP_CITY}}, E-Mail: <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+
+      <h2>2. Grundsatz: Daten bleiben in deinem Browser</h2>
+      <p>
+        Mehrarbeit NRW ist eine reine Browser-Anwendung. Deine Eingaben (Stammdaten, Stundenpläne,
+        Monate, Erklärungen) werden ausschließlich lokal in deinem Browser verarbeitet. Es gibt kein
+        Benutzerkonto und keinen Server der Anwendung, an den Eingaben übertragen werden. PDFs
+        werden auf deinem Gerät erzeugt.
+      </p>
+
+      <h2>3. Lokale Speicherung</h2>
+      <p>
+        Wenn du das Speichern aktivierst, legt die App deine Daten im
+        <code>localStorage</code> deines Browsers ab. Diese Daten verlassen dein Gerät nicht und
+        lassen sich jederzeit in den Einstellungen oder über die Browser-Einstellungen löschen. Es
+        werden keine Cookies zu Tracking- oder Werbezwecken gesetzt.
+      </p>
+
+      <h2>4. Server-Logfiles beim Hosting</h2>
+      <p>
+        Beim Aufruf der Seite verarbeitet der Hosting-Server technisch notwendige Verbindungsdaten
+        (z. B. IP-Adresse, Zeitpunkt, abgerufene Datei, Browserkennung). Rechtsgrundlage ist Art. 6
+        Abs. 1 lit. f DSGVO (Betrieb und Sicherheit des Angebots). {{#HOSTING}}Hosting-Anbieter:
+        {{HOSTING}}. {{/HOSTING}}{{#LOG_RETENTION}}Die Logdaten werden {{LOG_RETENTION}}
+        gespeichert.{{/LOG_RETENTION}}
+      </p>
+
+      <h2>5. Formularvorlage</h2>
+      <p>
+        Beim Start lädt die App die leere Formularvorlage (LBV-Änderungsmitteilung) und
+        gegebenenfalls Konfigurationsdateien vom Server der Anwendung bzw. von der in der
+        Konfiguration genannten Quelle (derzeit: bra.nrw.de). Dabei werden keine deiner Eingaben
+        übertragen; die jeweilige Gegenstelle sieht technisch bedingt deine IP-Adresse.
+      </p>
+
+      <h2>6. Optional: Sicherung in Google Drive</h2>
+      <p>
+        Nur wenn du die Google-Drive-Sicherung ausdrücklich aktivierst, wird das
+        Google-Anmeldeskript (<code>accounts.google.com</code>) nachgeladen und du meldest dich bei
+        Google an. Die App verwendet ausschließlich den Zugriffsumfang <code>drive.file</code>: Sie
+        kann nur Dateien lesen und schreiben, die sie selbst angelegt hat. Deine Sicherung wird
+        direkt von deinem Browser an Google Drive übertragen und liegt in deinem eigenen
+        Google-Konto. Die Betreiber dieser Anwendung erhalten weder die Daten noch Zugangsdaten. Es
+        gilt die Datenschutzerklärung von Google (Google Ireland Limited bzw. Google LLC).
+        Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO); sie kann jederzeit
+        durch Trennen der Verbindung in den Einstellungen und in deinem Google-Konto widerrufen
+        werden.
+      </p>
+
+      <h2>7. Personenbezogene Daten in erzeugten PDFs</h2>
+      <p>
+        Die erzeugten Dokumente enthalten die von dir eingegebenen Angaben (z. B. Name,
+        Personalnummer, Dienststelle). Für Aufbewahrung und Weitergabe, etwa an das LBV, bist du
+        selbst verantwortlich.
+      </p>
+
+      <h2>8. Deine Rechte</h2>
+      <p>
+        Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
+        Datenübertragbarkeit und Widerspruch sowie das Recht auf Beschwerde bei einer
+        Datenschutz-Aufsichtsbehörde. Da die App keine Eingaben beim Betreiber speichert, betrifft
+        dies im Wesentlichen die Server-Logfiles.
+      </p>
+      <footer>
+        <a href="privacy.html">Datenschutz</a><a href="impress.html">Impressum</a
+        ><a href="terms.html">Nutzungsbedingungen</a>
+      </footer>
+    </main>
+  </body>
+</html>

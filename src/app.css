@@ -116,7 +116,7 @@ a {
 
 /* ---------- Dialog: Einstellungen ---------- */
 .dialog {
-  width: min(520px, calc(100vw - 32px));
+  width: min(600px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);
   padding: 0;
   overflow: hidden;
@@ -128,6 +128,67 @@ a {
 }
 .dialog::backdrop {
   background: rgb(0 0 0 / 0.4);
+}
+/* Reiter: einzeilig, auf schmalen Bildschirmen horizontal scrollbar */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.tabs button {
+  flex-shrink: 0;
+  padding: 10px 10px 9px;
+  font-size: 14px;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+}
+.tabs button:hover {
+  color: var(--text);
+}
+.tabs button.active {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+/* feste Höhe, damit der Dialog beim Reiterwechsel nicht springt */
+.settings-body {
+  flex: 0 1 480px;
+}
+.subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.subtabs button {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.subtabs button.active {
+  background: var(--bg-hover);
+  font-weight: 600;
+}
+.doc-frame {
+  width: 100%;
+  height: 320px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.doc-text {
+  max-height: 320px;
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  font:
+    12px/1.45 ui-monospace,
+    Menlo,
+    monospace;
+  white-space: pre-wrap;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 /* Titel und Buttons fest, dazwischen scrollt .dialog-body */
 .dialog form {
@@ -240,6 +301,9 @@ header {
   background: var(--bg-hover);
 }
 .title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 6px 8px;
   border-radius: 8px;
   font-weight: 500;
@@ -962,4 +1026,10 @@ details.head summary small {
     z-index: 10;
     background: rgb(0 0 0 / 0.4);
   }
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
 }

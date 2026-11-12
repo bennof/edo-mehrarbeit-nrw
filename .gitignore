@@ -15,3 +15,5 @@ vite.config.*.timestamp-*
 *.log
 /.vite/
 /coverage/
+/static/THIRD-PARTY-LICENSES.txt
+/static/LICENSE.txt

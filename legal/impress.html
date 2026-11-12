@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Impressum – Mehrarbeit NRW</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <script>
+      // Im Einstellungsdialog der App eingebettet: Navigation ausblenden
+      if (self !== top) document.documentElement.classList.add('embedded');
+    </script>
+    <style>
+      :root {
+        --bg: #fff;
+        --text: #1c1c1a;
+        --muted: #6e6e69;
+        --border: #e2e2de;
+        --accent: #2e86b8;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1b1b1a;
+          --text: #ececea;
+          --muted: #9a9a95;
+          --border: #33332f;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.6 system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+      nav img {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+      }
+      a {
+        color: var(--accent);
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin-top: 2rem;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      footer a {
+        margin-right: 1rem;
+      }
+      .todo {
+        background: #fff3c4;
+        color: #5c4a00;
+        padding: 0 4px;
+        border-radius: 3px;
+      }
+      .embedded nav,
+      .embedded footer {
+        display: none;
+      }
+      .embedded main {
+        padding-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <img src="logo.png" alt="" width="28" height="28" /><a href="./"
+          >← Zur App „Mehrarbeit NRW“</a
+        >
+      </nav>
+      <h1>Impressum</h1>
+      <p>Angaben gemäß § 5 DDG</p>
+      <p>
+        {{NAME}}<br />
+        {{STREET}}<br />
+        {{ZIP_CITY}}
+      </p>
+      <h2>Kontakt</h2>
+      <p>
+        E-Mail: <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>{{#PHONE}}<br />
+        Telefon: {{PHONE}}{{/PHONE}}
+      </p>
+      <h2>Verantwortlich für den Inhalt</h2>
+      <p>Verantwortlich nach § 18 Abs. 2 MStV: {{NAME}}, {{STREET}}, {{ZIP_CITY}}</p>
+      <h2>Hinweis</h2>
+      <p>
+        „Mehrarbeit NRW“ ist ein privates Open-Source-Projekt und kein Angebot des Landes
+        Nordrhein-Westfalen, des Landesamts für Besoldung und Versorgung (LBV NRW) oder einer
+        Schulbehörde.
+      </p>
+      <footer>
+        <a href="privacy.html">Datenschutz</a><a href="impress.html">Impressum</a
+        ><a href="terms.html">Nutzungsbedingungen</a>
+      </footer>
+    </main>
+  </body>
+</html>

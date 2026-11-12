@@ -1,13 +1,15 @@
 {
   "name": "edo-mehrarbeit-nrw",
   "private": true,
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0",
   "description": "Erfassung von Mehrarbeit für Lehrkräfte in NRW und Ausfüllen der LBV-Änderungsmitteilung",
   "license": "MIT",
   "author": "Benjamin Benno Falkner",
   "type": "module",
   "scripts": {
+    "predev": "npm run licenses",
     "dev": "vite dev",
+    "prebuild": "npm run licenses",
     "build": "vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
@@ -15,6 +17,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
     "lint": "prettier --check .",
+    "licenses": "node scripts/third-party-licenses.mjs",
     "commit-version": "node scripts/commit-version.mjs",
     "anlage1": "node --experimental-strip-types --no-warnings scripts/build-anlage1.mts"
   },

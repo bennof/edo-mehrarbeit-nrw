@@ -1,11 +1,20 @@
+<p align="center">
+  <img src="branding/readme-logo.png" alt="edo mehrarbeit-nrw" width="240" />
+</p>
+
 # edoMehrarbeitNRW
 
 Erfassung von Mehrarbeit (Lehrkräfte NRW) und Ausfüllen der LBV-Änderungsmitteilung
 „Mehrarbeitsvergütung für Lehrkräfte“ (LBV(A/Bes)23, Abschnitt A).
 
-Reine Client-SPA (SvelteKit + Svelte 5 + TypeScript): Alle Daten bleiben im Browser.
+**Optional:** Zusätzlich lässt sich der „Nachweis über geleistete Mehrarbeit im Schuldienst“
+(Anlage 1 zu BASS 21-22 Nr. 21) als PDF erzeugen. Das ist nur nötig, wenn Schule oder Land diesen
+Nachweis verlangen. Für die LBV-Änderungsmitteilung wird er nicht gebraucht; die App funktioniert
+auch ohne ihn.
 
-Aktueller Stand: **0.1.0-beta.1** – erste Beta-Version. Rückmeldungen aus dem Alltag sind
+Reine Client-SPA (SvelteKit + Svelte 5 + TypeScript): Daten bleiben standardmäßig im Browser; optional sind Sicherungen in Google Drive möglich.
+
+Aktueller Stand: **0.1.0** – erste veröffentlichte Version. Rückmeldungen aus dem Alltag sind
 willkommen; bitte erzeugte PDFs vor dem Einreichen prüfen.
 
 Die leere Formularvorlage wird nicht mitverteilt, sondern beim Start online geladen (siehe
@@ -16,10 +25,11 @@ Voraussetzung: **Node.js 24** (mit nvm: `nvm use`). `.npmrc` erzwingt die in
 
 ```sh
 npm ci
-npm run dev      # http://localhost:5173
+npm run dev      # http://localhost:5173 (Port per DEV_PORT in .env änderbar)
 npm run check    # TypeScript-/Svelte-Prüfung
 npm run lint     # Formatierung prüfen
 npm run format   # Prettier
+npm run licenses # Lizenzen aller Abhängigkeiten → static/THIRD-PARTY-LICENSES.txt (läuft vor dev/build automatisch)
 npm run build    # Ausgabe in build/ – für nginx: try_files $uri /index.html;
 BASE_PATH=/edoMehrarbeitNRW npm run build   # für Hosting in einem Unterverzeichnis
 ```
@@ -27,12 +37,19 @@ BASE_PATH=/edoMehrarbeitNRW npm run build   # für Hosting in einem Unterverzeic
 Die ZIP-/tar.gz-Dateien im GitHub-Release werden mit der Repository-Variable `BASE_PATH` gebaut
 (Settings → Secrets and variables → Actions → Variables) und passen nur für diesen Pfad.
 
+## Rechtliche Seiten
+
+`legal/privacy.html`, `legal/impress.html` und `legal/terms.html` sind Vorlagen. Beim Build (und im
+Dev-Server) entstehen daraus `/privacy.html`, `/impress.html` und `/terms.html`; die Platzhalter
+kommen aus `EDO_LEGAL_*` in `.env` (Vorlage: `example.env`). Fehlen Pflichtwerte (Name, Anschrift, E-Mail), werden die Seiten übersprungen. Der
+GitHub-Release enthält sie bewusst nicht: Wer selbst baut, trägt seine eigenen Angaben in `.env` ein.
+
 ## Struktur
 
 - `src/routes/+layout.svelte` – Sidebar: Neue Erklärung, Verlauf, Neuer Monat, Monate,
   Neuer Stundenplan, Stundenpläne, Einstellungen
 - `src/routes/month/[id]/+page.svelte` – Stunden + Merkmal „V“ eines Monats, Tagesnachweis
-  (`src/lib/MonthDays.svelte`, `src/lib/days.ts`) wie Anlage 1 zu BASS 21-22 Nr. 21
+  (`src/lib/MonthDays.svelte`, `src/lib/days.ts`) wie Anlage 1 zu BASS 21-22 Nr. 21 (optional)
 - `src/routes/schedule/[id]/+page.svelte` – Stundenplan: Sollstunden Mo–Fr zum Schnellausfüllen
 - `src/routes/declaration/[id]/+page.svelte` – bis zu 6 Monate wählen, Vorschau, Download
 - `src/lib/types.ts` – Datenmodell (Profile, Month, Declaration)
@@ -206,3 +223,41 @@ den manuellen Start auf dem Default-Branch vorhanden sein.
 ## Lizenz
 
 [MIT](LICENSE). Das LBV-Formular unterliegt nicht dieser Lizenz und wird nicht mitverteilt.
+
+## Google Drive als Online-Speicher
+
+Unter **Einstellungen → Online-Speicher: Google Drive** zuerst die Anmeldung laden und
+anschließend mit Google verbinden. „In Google Drive sichern“ speichert alle Stammdaten,
+Monate samt Tagesnachweisen, Stundenpläne und Erklärungen als JSON im App-Ordner
+**edoMehrarbeitNRW**. Jede Sicherung erhält eine neue Datei. Vorhandene Sicherungen lassen
+sich auswählen und nach Bestätigung laden (ersetzt die aktuellen App-Daten).
+PDFs werden weiterhin aus diesen Daten erzeugt, nicht zusätzlich hochgeladen.
+Es gibt keinen automatischen Abgleich; die lokale Speicheroption ist unabhängig davon.
+
+Konfiguration für Entwicklung und Build in `.env`:
+
+```sh
+EDO_GOOGLE_CLIENT_ID=deine-client-id.apps.googleusercontent.com
+```
+
+Nur die öffentliche Client-ID wird in den Build übernommen. `EDO_GOOGLE_CLIENT_SECRET`
+wird für diese reine Browser-App nicht verwendet und nicht eingebunden. Alternativ kann
+`googleClientId` in `static/config.json` bzw. der ausgelieferten `config.json` gesetzt werden;
+ein nicht leerer Wert überschreibt die Build-Konfiguration. Bei CI-Builds die Client-ID als
+Umgebungsvariable bereitstellen oder anschließend die ausgelieferte Konfiguration ergänzen.
+
+Im zugehörigen Google-Cloud-Projekt:
+
+1. Google Drive API aktivieren und den OAuth-Zustimmungsbildschirm konfigurieren.
+2. OAuth-Client vom Typ **Webanwendung** verwenden; unter autorisierten JavaScript-Quellen
+   die tatsächlichen Origins eintragen, z. B. `http://localhost:5173` sowie die produktive
+   HTTPS-Origin (ohne Unterpfad, auch bei `BASE_PATH`).
+3. Im Testmodus die verwendeten Google-Konten als Testnutzer freischalten.
+
+Die App fordert ausschließlich `drive.file` an und erkennt ihre Ordner und Sicherungen über
+App-Metadaten. Zugriffstoken bleiben nur im Arbeitsspeicher. Nach Neuladen oder Ablauf ist
+eine erneute Anmeldung nötig. „Trennen“ beendet die lokale Verbindung; Dateien bleiben in
+Drive. Eine erteilte Freigabe kann zusätzlich im Google-Konto widerrufen werden.
+
+Technische Grundlage: [Google Identity Services Token-Modell](https://developers.google.com/identity/oauth2/web/guides/use-token-model)
+und [Drive-Ordner](https://developers.google.com/workspace/drive/api/guides/folder).

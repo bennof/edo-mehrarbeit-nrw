@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { resolve } from '$app/paths';
+  import { asset, resolve } from '$app/paths';
   import '../app.css';
   import { page } from '$app/state';
   import { afterNavigate, goto, replaceState } from '$app/navigation';
@@ -140,7 +140,9 @@
   <main>
     <header>
       <button class="icon" aria-label="Seitenleiste umschalten" onclick={toggle}>☰</button>
-      <a class="title" href={resolve('/')}>Mehrarbeit NRW</a>
+      <a class="title" href={resolve('/')}
+        ><img class="logo" src={asset('/logo.png')} alt="" width="28" height="28" />Mehrarbeit NRW</a
+      >
     </header>
     {@render children()}
   </main>

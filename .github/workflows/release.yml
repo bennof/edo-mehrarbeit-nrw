@@ -63,7 +63,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run check
-      # Repository-Variable BASE_PATH: leer = Domain-Wurzel.
+      # Repository-Variable BASE_PATH: leer = Domain-Wurzel. `npm run build` erzeugt vorher
+      # THIRD-PARTY-LICENSES.txt (bricht bei unverträglicher Lizenz ab) und legt sie samt LICENSE.txt ins Archiv.
       - run: npm run build
         env:
           BASE_PATH: ${{ vars.BASE_PATH }}
@@ -85,6 +86,7 @@ jobs:
           files: |
             edo-mehrarbeit-nrw-${{ env.RELEASE_TAG }}.zip
             edo-mehrarbeit-nrw-${{ env.RELEASE_TAG }}.tar.gz
+            build/THIRD-PARTY-LICENSES.txt
           fail_on_unmatched_files: true
           body_path: release-notes.md
           generate_release_notes: true

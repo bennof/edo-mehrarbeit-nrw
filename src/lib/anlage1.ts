@@ -11,11 +11,13 @@ import {
   type PDFForm
 } from 'pdf-lib';
 import { totalsOf } from './days.ts';
+import { dateLabel } from './format.ts';
 import type { Month, Profile } from './types.ts';
 
 /** Feldnamen – Tagesfelder mit Suffix _1 … _31 */
 export const ANLAGE1_FIELDS = {
   name: 'Name_Vorname',
+  birthDate: 'Geburtsdatum',
   title: 'Amtsbezeichnung',
   payGrade: 'BesGr_VergGr',
   lbvNumber: 'LBV_Personalnummer',
@@ -116,18 +118,20 @@ export async function buildAnlage1(): Promise<Uint8Array> {
     bold: await doc.embedFont(StandardFonts.HelveticaBold)
   };
 
-  // Kopf: Name | Amtsbezeichnung | BesGr
+  // Kopf: Name | Geburtsdatum | Amtsbezeichnung | BesGr
   let y = H - 60;
   const head = 34;
   box(c, LEFT, y - head, RIGHT - LEFT, head);
-  const col2 = LEFT + 260;
-  const col3 = RIGHT - 90;
-  line(c, col2, y, col2, y - head);
-  line(c, col3, y, col3, y - head);
+  const colBirth = LEFT + 205;
+  const col2 = colBirth + 72;
+  const col3 = RIGHT - 80;
+  for (const x of [colBirth, col2, col3]) line(c, x, y, x, y - head);
   text(c, 'Name, Vorname', LEFT + 4, y - 9, 7);
+  text(c, 'Geburtsdatum', colBirth + 4, y - 9, 7);
   text(c, 'Amts-/Dienstbezeichnung', col2 + 4, y - 9, 7);
   text(c, 'BesGr./VergGr.', col3 + 4, y - 9, 7);
-  field(c, F.name, LEFT + 3, y - head + 2, col2 - LEFT - 6, 18, { size: 10 });
+  field(c, F.name, LEFT + 3, y - head + 2, colBirth - LEFT - 6, 18, { size: 10 });
+  field(c, F.birthDate, colBirth + 3, y - head + 2, col2 - colBirth - 6, 18, { size: 10 });
   field(c, F.title, col2 + 3, y - head + 2, col3 - col2 - 6, 18, { size: 10 });
   field(c, F.payGrade, col3 + 3, y - head + 2, RIGHT - col3 - 6, 18, { size: 10 });
 
@@ -357,6 +361,7 @@ export async function fillAnlage1(
   const set = (name: string, value: string) => form.getTextField(name).setText(value);
 
   set(F.name, [profile.lastName, profile.firstName].filter(Boolean).join(', '));
+  set(F.birthDate, dateLabel(profile.birthDate));
   set(F.lbvNumber, profile.lbvNumber);
   set(F.title, profile.title ?? '');
   set(F.payGrade, profile.payGrade ?? '');
